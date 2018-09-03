@@ -1,4 +1,7 @@
 <resources>
-    <string name="app_name">onlinegalary</string>
+    <string name="app_name">BIET DESIGN HELPER</string>
     <string name="choose_file">choose file</string>
+    <string name="facebook_app_id">676079146103730</string>
+    <string name="fb_login_protocol_scheme">fb676079146103730</string>
+
 </resources>

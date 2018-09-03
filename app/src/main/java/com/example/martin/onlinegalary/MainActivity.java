@@ -36,7 +36,7 @@ private static final int PICK_IMAGE_REQUEST=1;
 private Button mButtonChooseImage;
 private Button mButtonUpload;
 private EditText mEditTextFileName;
-private TextView mTextViewShowUpload;
+
 private ImageView imageView;
 private ProgressBar progressBar;
 private Uri mImageUri;
@@ -50,7 +50,7 @@ private Uri mImageUri;
         mButtonChooseImage=findViewById( R.id.button_choose_image );
         mButtonUpload=findViewById( R.id.button_upload );
         mEditTextFileName=findViewById( R.id.edit_text_file_name );
-        mTextViewShowUpload=findViewById( R.id.text_view_show_uploads );
+
         imageView=findViewById( R.id.imageView );
         progressBar=findViewById( R.id.progress_bar );
         storageReference= FirebaseStorage.getInstance().getReference("uploads");
@@ -70,12 +70,7 @@ private Uri mImageUri;
             }
         } );
 
-        mTextViewShowUpload.setOnClickListener( new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-            }
-        } );
     }
     private void openFileChoser(){
         Intent intent=new Intent(  );

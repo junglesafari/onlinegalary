@@ -52,14 +52,6 @@
 
         android:text="upload" />
 
-    <TextView
-        android:id="@+id/text_view_show_uploads"
-        android:layout_width="wrap_content"
-        android:layout_height="43dp"
-        android:layout_alignTop="@+id/button_upload"
-        android:layout_toEndOf="@+id/button_upload"
-        android:text="show uploads"
-        android:textSize="16sp"
-        android:gravity="center"/>
+
 
 </RelativeLayout>
