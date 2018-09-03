@@ -86,7 +86,9 @@ public class loginactivity extends AppCompatActivity {
     }
 
     private void updateUI(){
-        Toast.makeText( this,"congates you are logged in ",Toast.LENGTH_SHORT ).show();
+        Intent intent=new Intent( loginactivity.this,recyclerviewactivity.class );
+        startActivity( intent );
+        finish();
     }
     private void handleFacebookAccessToken(AccessToken token) {
         Log.d("fblogin", "handleFacebookAccessToken:" + token);

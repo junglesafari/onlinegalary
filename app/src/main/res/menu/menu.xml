@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<item  android:title="Upload your layout" android:id="@+id/uploadwork"/>
+<item  android:title="About Developer"  android:id="@+id/aboutdeveloper"/>
+</menu>

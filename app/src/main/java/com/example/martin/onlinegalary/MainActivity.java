@@ -26,6 +26,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
@@ -36,13 +37,15 @@ private static final int PICK_IMAGE_REQUEST=1;
 private Button mButtonChooseImage;
 private Button mButtonUpload;
 private EditText mEditTextFileName;
-
+    modleclassforuploads uploadtask;
 private ImageView imageView;
 private ProgressBar progressBar;
-private Uri mImageUri;
+private Uri mImageuri;
 //get the database and imagereferences
-    private StorageReference storageReference;
-    private DatabaseReference databaseReference;
+    private StorageReference mstorageref;
+    private DatabaseReference mdatabaseref;
+    private StorageTask muloadtask;
+    public   Uri finaluri;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
@@ -53,13 +56,16 @@ private Uri mImageUri;
 
         imageView=findViewById( R.id.imageView );
         progressBar=findViewById( R.id.progress_bar );
-        storageReference= FirebaseStorage.getInstance().getReference("uploads");
-        databaseReference=FirebaseDatabase.getInstance().getReference("uploads");
+        mstorageref= FirebaseStorage.getInstance().getReference("uploads");
+        mdatabaseref= FirebaseDatabase.getInstance().getReference("uploads");
 
         mButtonUpload.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-             uploadFile();
+                if(muloadtask!=null&&muloadtask.isInProgress()){
+                    Toast.makeText( getApplicationContext(),"ruk ja chutiye upload is in progress",Toast.LENGTH_SHORT ).show();
+                }else {uploadFile();}
+
             }
         } );
 
@@ -86,12 +92,14 @@ private Uri mImageUri;
        if(requestCode == PICK_IMAGE_REQUEST &&
                resultCode == RESULT_OK && data != null &&
                data.getData() != null){
-           mImageUri=data.getData();
-           Picasso.with( this ).load( mImageUri ).into( imageView );
+           mImageuri=data.getData();
+           Picasso.with( this )
+                   .load( mImageuri )
+                   .fit()
+                   .into( imageView );
        }
 
     }
-//the only responsibilty of this function is to get the extension of image file.
     private String getFileExtension(Uri uri){
         ContentResolver ct=getContentResolver();
         MimeTypeMap mime=MimeTypeMap.getSingleton();
@@ -99,42 +107,103 @@ private Uri mImageUri;
     }
 
 
- private void uploadFile(){
-if(mImageUri!=null){
-    StorageReference fileReference=storageReference.child( System.currentTimeMillis()+"."+getFileExtension( mImageUri ) );
-     fileReference.putFile( mImageUri ).addOnSuccessListener( new OnSuccessListener<UploadTask.TaskSnapshot>() {
-         @Override
-         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-           //we use handler here to use postdelay method becase we want that when upload is successfull
-             // then progressbar takes time to set its progress back to 0 in some time not immediately
-             Handler handler=new Handler(  );
-             handler.postDelayed( new Runnable() {
+// private void uploadFile(){
+//if(mImageUri!=null){
+//    final StorageReference fileReference=mstorageref.child( System.currentTimeMillis()+"."+getFileExtension( mImageUri ) );
+//     fileReference.putFile( mImageUri ).addOnSuccessListener( new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//         @Override
+//         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//
+//           //we use handler here to use postdelay method becase we want that when upload is successfull
+//             // then progressbar takes time to set its progress back to 0 in some time not immediately
+//             Handler handler=new Handler(  );
+//             handler.postDelayed( new Runnable() {
+//                 @Override
+//                 public void run() {
+//                     progressBar.setProgress( 0 );
+//                 }
+//             },5000 );
+//
+//             fileReference.getDownloadUrl().addOnSuccessListener( new OnSuccessListener<Uri>() {
+//                 @Override
+//                 public void onSuccess(Uri uri) {
+//                     uploadtask=new modleclassforuploads( mEditTextFileName.getText().toString().trim(),uri.toString() );
+//
+//                 }
+//             } );
+//String uploadid=databaseReference.push().getKey();
+//databaseReference.child( uploadid ).setValue(uploadtask  );
+//
+//             // work to do here////
+//         }
+//     } ).addOnFailureListener( new OnFailureListener() {
+//         @Override
+//         public void onFailure(@NonNull Exception e) {
+//        Toast.makeText( MainActivity.this,e.getMessage(),Toast.LENGTH_SHORT ).show();
+//         }
+//     } ).addOnProgressListener( new OnProgressListener<UploadTask.TaskSnapshot>() {
+//         @Override
+//         public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+//           double progress=(100.0*taskSnapshot.getBytesTransferred()/taskSnapshot.getTotalByteCount());
+//           progressBar.setProgress( (int)progress );
+//         }
+//     } );
+//
+//
+//}else {
+//    Toast.makeText( this,"file not exist",Toast.LENGTH_SHORT ).show();
+//}
+//
+//
+// }
+private void uploadFile(){
+    if(!mEditTextFileName.getText().toString().trim().equals( "" )&&mImageuri!=null){
+        final StorageReference storageReference=mstorageref.child( System.currentTimeMillis()+"."+getFileExtension( mImageuri ) );
+        muloadtask=storageReference.putFile( mImageuri ).addOnSuccessListener( new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Handler handler=new Handler(  );
+                handler.postDelayed( new Runnable() {
+                    @Override
+                    public void run() {
+                        progressBar.setProgress( 0 );
+                    }
+                } ,1000);
+                //todo:make a new upload class object so that we can store the meta information of
+                //todo:image uploaded
+                storageReference.getDownloadUrl().addOnSuccessListener( new OnSuccessListener<Uri>() {
                  @Override
-                 public void run() {
-                     progressBar.setProgress( 0 );
+                 public void onSuccess(Uri uri) {
+                    // uploadtask=new modleclassforuploads( mEditTextFileName.getText().toString().trim(),uri.toString() );
+                   // finaluri=uri;
+                     modleclassforuploads uploadTask=new modleclassforuploads(mEditTextFileName.getText().toString().trim(),uri.toString());
+                     String uploadid=mdatabaseref.push().getKey();
+                     mdatabaseref.child( uploadid ).setValue( uploadTask );
+                     Toast.makeText( getApplicationContext(),"upload successful",Toast.LENGTH_SHORT ).show();
+
+
+
+
                  }
-             },5000 );
-// work to do here////
-         }
-     } ).addOnFailureListener( new OnFailureListener() {
-         @Override
-         public void onFailure(@NonNull Exception e) {
-        Toast.makeText( MainActivity.this,e.getMessage(),Toast.LENGTH_SHORT ).show();
-         }
-     } ).addOnProgressListener( new OnProgressListener<UploadTask.TaskSnapshot>() {
-         @Override
-         public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-           double progress=(100.0*taskSnapshot.getBytesTransferred()/taskSnapshot.getTotalByteCount());
-           progressBar.setProgress( (int)progress );
-         }
-     } );
+             } );
 
+                 }
+        } ).addOnFailureListener( new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText( getApplicationContext(),"upload fail something went wrong",Toast.LENGTH_SHORT ).show();
+            }
+        } ).addOnProgressListener( new OnProgressListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                double progress=(100.0*taskSnapshot.getBytesTransferred()/taskSnapshot.getTotalByteCount());
+                progressBar.setProgress( (int)progress );
+            }
+        } );
+    }else {
+        Toast.makeText( this,"something is missing",Toast.LENGTH_SHORT ).show();
+    }
 
-}else {
-    Toast.makeText( this,"file not exist",Toast.LENGTH_SHORT ).show();
 }
-
-
- }
 
 }
