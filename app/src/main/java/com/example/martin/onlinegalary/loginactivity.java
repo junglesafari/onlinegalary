@@ -24,6 +24,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -32,6 +33,7 @@ public class loginactivity extends AppCompatActivity {
 
     private CallbackManager mCallbackManager;
     private FirebaseAuth mAuth;
+    DatabaseReference reference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +104,15 @@ public class loginactivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("fblogin", "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
+                            assert user != null;
+                            modelclassforauthentication modelclassforauthentication=new modelclassforauthentication(user.getDisplayName(),user.getEmail(),user.getUid()  );
+                           reference=Databaseref.getDatabaseInstance().getReference("Authentication");
+                           String id=reference.push().getKey();
+                           reference.child( id ).setValue(  modelclassforauthentication);
+
+
+
+
                             updateUI();
                         } else {
                             // If sign in fails, display a message to the user.

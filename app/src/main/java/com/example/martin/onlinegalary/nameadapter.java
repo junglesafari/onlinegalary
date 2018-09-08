@@ -15,31 +15,34 @@ import java.util.ArrayList;
 
 public class nameadapter extends RecyclerView.Adapter<viewholdernamerecyclerview> {
 
-    ArrayList<modleclassforuploads> datalist;
-    private LayoutInflater inflater;
+    private ArrayList<modleclassforuploads> datalist;
     private Context context;
     private nameclicklistener clicklistener;
+
+    View output;
 
     public nameadapter(Context context,ArrayList<modleclassforuploads> datalist, nameclicklistener clicklistener) {
         this.datalist = datalist;
         this.context = context;
         this.clicklistener = clicklistener;
+
     }
 
 
     @NonNull
     @Override
     public viewholdernamerecyclerview onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-        View output = inflater.inflate( R.layout.layoutnamerecyclerview, parent, false );
-        return new viewholdernamerecyclerview( output );
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+        assert inflater != null;
+            output = inflater.inflate( R.layout.layoutnamerecyclerview, parent, false );
+       return new viewholdernamerecyclerview( output );
     }
 
     @Override
     public void onBindViewHolder(@NonNull final viewholdernamerecyclerview holder, int position) {
         String to_replace="BIETDH";
         String to_show=datalist.get( position ).getmName().replace( to_replace,"" );
-        holder.paricipentname.setText( to_show );
+       holder.paricipentname.setText( to_show );
         Picasso
                 .with( context )
                 .load( datalist.get( position ).getmImageUrl() )

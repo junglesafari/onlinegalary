@@ -15,7 +15,7 @@ public viewholdernamerecyclerview(@NonNull View itemview){
 super(itemview);
     this.itemview=itemview;
     paricipentname=itemview.findViewById( R.id.followertextview );
-    circleImageView=itemView.findViewById( R.id.circularimageview );
+    circleImageView=itemview.findViewById( R.id.circularimageview );
 
 
 }

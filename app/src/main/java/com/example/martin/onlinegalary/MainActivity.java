@@ -96,6 +96,7 @@ private Uri mImageuri;
            Picasso.with( this )
                    .load( mImageuri )
                    .fit()
+                   .centerCrop()
                    .into( imageView );
        }
 

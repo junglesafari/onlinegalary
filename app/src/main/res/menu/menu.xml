@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-<item  android:title="Upload your layout" android:id="@+id/uploadwork"/>
-<item  android:title="About Developer"  android:id="@+id/aboutdeveloper"/>
+    <item
+        android:id="@+id/uploadwork"
+        android:title="Upload your layout" />
+
+    <item
+        android:id="@+id/task"
+        android:title="Task" />
+    <item android:id="@+id/finaltask"
+        android:title="Selected Task"/>
+    <item
+        android:id="@+id/instructions"
+        android:title="Instructions"/>
+    <item
+        android:id="@+id/aboutdeveloper"
+        android:title="About Developer" />
+
 </menu>
